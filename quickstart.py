@@ -57,6 +57,7 @@ def main():
       print("No data found.")
       return
 
+    # print all rows
     for row in values:
       print(row)
   except HttpError as err:
