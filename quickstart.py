@@ -62,7 +62,10 @@ def main():
       return
 
     # print all rows
-    printAll(values)
+    # printAll(values)
+
+    # print specific row
+    printById(values, '2')
     
   except HttpError as err:
     print(err)
