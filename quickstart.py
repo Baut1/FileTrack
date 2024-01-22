@@ -7,8 +7,12 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+# import dotenv
 from dotenv import load_dotenv
 load_dotenv('./constants.env')
+
+# import functions
+from actions import *
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
@@ -58,8 +62,8 @@ def main():
       return
 
     # print all rows
-    for row in values:
-      print(row)
+    printAll(values)
+    
   except HttpError as err:
     print(err)
 
