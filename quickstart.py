@@ -15,11 +15,11 @@ load_dotenv('./constants.env')
 from actions import *
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = os.environ.get('SPREADSHEET_ID')
-SAMPLE_RANGE_NAME = "!A:G"
+SAMPLE_RANGE_NAME = "Turnos!A1:G10"
 
 
 def main():
@@ -62,7 +62,13 @@ def main():
       return
 
     # print all rows
-    printAll(values)
+    # print_all(values)
+
+    # print specific row
+    # print_by_id(values, '2')
+
+    # edit specific row
+    update_by_id(values, 2)
     
   except HttpError as err:
     print(err)
