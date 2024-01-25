@@ -65,9 +65,11 @@ def main():
     # print_all(values)
 
     # print specific row
-    # print_by_id(values, '2')
+    # print_by_id(values, '3')
 
-    print_filtered_by_client(values, 'juan')
+    # print_filtered_by_client(values, 'juan')
+
+    print_filtered_by_model(values, 'iPhone 15')
 
     # edit specific row
     # update_by_id(values, 2)
