@@ -67,8 +67,10 @@ def main():
     # print specific row
     # print_by_id(values, '2')
 
+    print_filtered_by_client(values, 'juan')
+
     # edit specific row
-    update_by_id(values, 2)
+    # update_by_id(values, 2)
     
   except HttpError as err:
     print(err)

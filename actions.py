@@ -45,6 +45,10 @@ def print_by_id(values, id):
         if row[0] == id:
             print(row)
 
+def print_filtered_by_client(values, client_name):
+    result = filter(lambda row: client_name.lower() in row[1].lower(), values)
+    print(list(result))
+
 def find_row_index(sheet_values, column_index, target_value):
     for i, row in enumerate(sheet_values):
         if len(row) > column_index and row[column_index] == str(target_value):
