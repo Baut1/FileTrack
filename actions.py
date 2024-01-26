@@ -57,6 +57,10 @@ def print_filtered_by_date(values, date):
     result = filter(lambda row: date in row[5], values)
     print(list(result))
 
+def print_filtered_by_date_last_ten(values):
+    values.sort(key = lambda row: row[5], reverse=True)
+    print(list(values[0:10]))
+
 def find_row_index(sheet_values, column_index, target_value):
     for i, row in enumerate(sheet_values):
         if len(row) > column_index and row[column_index] == str(target_value):
