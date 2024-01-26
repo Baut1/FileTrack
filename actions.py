@@ -53,6 +53,10 @@ def print_filtered_by_model(values, model_name):
     result = filter(lambda row: model_name.lower() in row[3].lower(), values)
     print(list(result))
 
+def print_filtered_by_date(values, date):
+    result = filter(lambda row: date in row[5], values)
+    print(list(result))
+
 def find_row_index(sheet_values, column_index, target_value):
     for i, row in enumerate(sheet_values):
         if len(row) > column_index and row[column_index] == str(target_value):

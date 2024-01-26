@@ -69,7 +69,9 @@ def main():
 
     # print_filtered_by_client(values, 'juan')
 
-    print_filtered_by_model(values, 'iPhone 15')
+    # print_filtered_by_model(values, 'iPhone 15')
+
+    print_filtered_by_date(values, '2024-01-15')
 
     # edit specific row
     # update_by_id(values, 2)
