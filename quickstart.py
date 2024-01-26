@@ -65,10 +65,16 @@ def main():
     # print_all(values)
 
     # print specific row
-    # print_by_id(values, '2')
+    # print_by_id(values, '3')
+
+    # print_filtered_by_client(values, 'juan')
+
+    # print_filtered_by_model(values, 'iPhone 15')
+
+    print_filtered_by_date(values, '2024-01-15')
 
     # edit specific row
-    update_by_id(values, 2)
+    # update_by_id(values, 2)
     
   except HttpError as err:
     print(err)
