@@ -73,10 +73,12 @@ def main():
 
     # print_filtered_by_date(values, '2024-01-15')
 
-    print_filtered_by_date_last_ten(values)
+    # print_filtered_by_date_last_ten(values)
 
     # edit specific row
     # update_by_id(values, 2)
+
+    add(values)
     
   except HttpError as err:
     print(err)

@@ -101,3 +101,30 @@ def update_by_id(sheet_values, target_id):
 
     else:
         print(f"Row with '{column_name}' = '{target_id}' not found.")
+
+def add(sheet_values):
+
+    index_to_extract = 0
+    ids_array = [int(sub_array[index_to_extract]) for sub_array in sheet_values] # get array of ids
+    new_row_values = [max(ids_array) + 1, 'Ana', 'agonzalez@gmail.com', 'Samsung S23', 'Boton roto', '2024-02-01', 'asd']
+
+    try:
+            service = build("sheets", "v4", credentials=creds)
+
+            # Call the Sheets API
+            sheet = service.spreadsheets()
+            append_request = (
+                sheet.values()
+                .append(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+                        range=f'Turnos!A1',
+                        valueInputOption='USER_ENTERED',
+                        body={'values': [new_row_values]})
+            )
+            # Execute the request
+            response = append_request.execute()
+
+            # Print the updated range and values
+            print(f"Appended range: {response['updates']['updatedRange']}")
+            
+    except HttpError as err:
+        print(err)
