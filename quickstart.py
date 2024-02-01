@@ -19,7 +19,7 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = os.environ.get('SPREADSHEET_ID')
-SAMPLE_RANGE_NAME = "Turnos!A1:G10"
+SAMPLE_RANGE_NAME = "Turnos!A2:G20"
 
 
 def main():
@@ -71,10 +71,14 @@ def main():
 
     # print_filtered_by_model(values, 'iPhone 15')
 
-    print_filtered_by_date(values, '2024-01-15')
+    # print_filtered_by_date(values, '2024-01-15')
+
+    # print_filtered_by_date_last_ten(values)
 
     # edit specific row
     # update_by_id(values, 2)
+
+    add(values)
     
   except HttpError as err:
     print(err)
