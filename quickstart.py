@@ -1,6 +1,7 @@
+# imports
 import os
+from tkinter import *
 # import os.path
-
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -11,7 +12,7 @@ from googleapiclient.errors import HttpError
 from dotenv import load_dotenv
 load_dotenv('./constants.env')
 
-# import functions
+# import functions/methods
 from actions import *
 
 # If modifying these scopes, delete the file token.json.
@@ -20,6 +21,9 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = os.environ.get('SPREADSHEET_ID')
 SAMPLE_RANGE_NAME = "Turnos!A2:G20"
+
+# initialize data values
+values = [[]]
 
 
 def main():
@@ -55,6 +59,7 @@ def main():
         .get(spreadsheetId=SAMPLE_SPREADSHEET_ID, range=SAMPLE_RANGE_NAME)
         .execute()
     )
+    global values
     values = result.get("values", [])
 
     if not values:
@@ -78,11 +83,27 @@ def main():
     # edit specific row
     # update_by_id(values, 2)
 
-    add(values)
+    # add(values)
     
   except HttpError as err:
     print(err)
 
+# interfaz grafica
+root = Tk()
+root.title("Archivos")
+root.geometry("800x500")
+btnFindById = Button(root, text="Find by id", width=20, command=lambda:printall(values)).grid(row=5, column=0)
+
+def printall(values):
+  for r in range(0, 3):
+    for c in range(0, 7):
+        cell = Entry(root, width=10)
+        cell.grid(padx=5, pady=5, row=r, column=c)
+        cell.insert(0, '{}'.format(values[r][c]))
+
+
 
 if __name__ == "__main__":
   main()
+  
+root.mainloop()

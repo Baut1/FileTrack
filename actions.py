@@ -36,6 +36,7 @@ if not creds or not creds.valid:
 
 
 # actions
+# print all
 def print_all(values):
     for row in values:
         print(row)
