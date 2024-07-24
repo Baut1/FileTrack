@@ -1,4 +1,5 @@
 import os
+from tkinter import *
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -34,6 +35,27 @@ if not creds or not creds.valid:
     with open("token.json", "w") as token:
       token.write(creds.to_json())
 
+class MyLeftPanel:
+    def __init__(self, root, frame, values) -> None:
+        root = root
+        frame = frame
+
+        btnFindById = Button(root, text="Ver todos", command=lambda:printall(values)).grid(row=9, column=0)
+        
+        Label(root, text="ID").grid(row=0, column=0)
+        Label(root, text="Nombre").grid(row=0, column=1)
+        Label(root, text="email").grid(row=0, column=2)
+        Label(root, text="articulo").grid(row=0, column=3)
+        Label(root, text="detalle").grid(row=0, column=4)
+        Label(root, text="fecha").grid(row=0, column=5)
+        Label(root, text="comentario").grid(row=0, column=6)
+        def printall(values):
+            for r in range(0, 3):
+                for c in range(0, 7):
+                    cell = Entry(root, width=10)
+                    cell.grid(padx=5, pady=5, row=r+1, column=c)
+                    cell.insert(0, '{}'.format(values[r][c]))
+        printall(values)
 
 # actions
 # print all

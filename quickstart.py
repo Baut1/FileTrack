@@ -92,16 +92,15 @@ def main():
 root = Tk()
 root.title("Archivos")
 root.geometry("800x500")
-btnFindById = Button(root, text="Find by id", width=20, command=lambda:printall(values)).grid(row=5, column=0)
 
-def printall(values):
-  for r in range(0, 3):
-    for c in range(0, 7):
-        cell = Entry(root, width=10)
-        cell.grid(padx=5, pady=5, row=r, column=c)
-        cell.insert(0, '{}'.format(values[r][c]))
+def btn_nueva_ventana():
+  leftFrame = Frame(root)
+  leftFrame.grid(row=1, column=0, padx=10, pady=2)
+  leftPanel = MyLeftPanel(root, leftFrame, values)
+  abrir.destroy()
 
-
+abrir = Button(root, text="Abrir", command=btn_nueva_ventana)
+abrir.place(relx=0.5, rely=0.5, anchor='center')
 
 if __name__ == "__main__":
   main()
