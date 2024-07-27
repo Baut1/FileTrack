@@ -4,25 +4,6 @@ from tkinter import *
 # import functions/methods
 from actions import *
 
-  # print all rows
-  # print_all(values)
-
-  # print specific row
-  # print_by_id(values, '3')
-
-  # print_filtered_by_client(values, 'juan')
-
-  # print_filtered_by_model(values, 'iPhone 15')
-
-  # print_filtered_by_date(values, '2024-01-15')
-
-  # print_filtered_by_date_last_ten(values)
-
-  # edit specific row
-  # update_by_id(values, 2)
-
-  # add(values)
-
 # interfaz grafica
 root = Tk()
 root.title("Archivos")

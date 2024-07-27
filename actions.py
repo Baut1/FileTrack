@@ -23,7 +23,6 @@ SAMPLE_RANGE_NAME = os.environ.get('RANGE_NAME')
 
 # intitialize data values
 values = [[]]
-
 creds = None
 
 # connection to the API
@@ -81,11 +80,14 @@ def show_all(root, values):
                 cell.grid(padx=5, pady=5, row=r+1, column=c)
                 cell.insert(0, '{}'.format(values[r][c]))
 
-# print row given its id
-def print_by_id(values, id):
+# show row given its id
+def show_by_id(root, values, id):
     for row in values:
         if row[0] == id:
-            print(row)
+            for c in range(0, 7):
+                cell = Entry(root, width=10)
+                cell.grid(padx=5, pady=5, row=1, column=c)
+                cell.insert(0, '{}'.format(row[c]))
 
 # print all rows that match the client name
 def print_filtered_by_client(values, client_name):
@@ -180,7 +182,8 @@ class MyMainPanel:
         frame = frame
 
         # btnFindById = Button(root, text="Ver todos", command=lambda:show_all(root, values)).grid(row=9, column=0)
-        btnFindById = Button(root, text="Ver todos", command=lambda:update_by_id(values, 3)).grid(row=9, column=0)
+        btnShowAll = Button(root, text="Ver todos", command=lambda:show_all(root, values)).grid(row=9, column=0)
+        btnShowById = Button(root, text="Buscar por ID", command=lambda:show_by_id(root, values, "2")).grid(row=9, column=1)
         Label(root, text="ID").grid(row=0, column=0)
         Label(root, text="Nombre").grid(row=0, column=1)
         Label(root, text="email").grid(row=0, column=2)
