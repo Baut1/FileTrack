@@ -72,13 +72,17 @@ def main():
 
 
 # actions
-# show all rows
-def show_all(root, values):
-    for r in range(0, len(values)):
+# shows grid when given values, called by other filtering and sorting functions
+def show_grid(root, listValues):
+    for r in range(0, len(listValues)):
             for c in range(0, 7):
                 cell = Entry(root, width=10)
                 cell.grid(padx=5, pady=5, row=r+1, column=c)
-                cell.insert(0, '{}'.format(values[r][c]))
+                cell.insert(0, '{}'.format(listValues[r][c]))
+                
+# show all rows
+def show_all(root, values):
+    show_grid(root, values)
 
 # show row given its id
 def show_by_id(root, values, id):
@@ -93,11 +97,7 @@ def show_by_id(root, values, id):
 def show_filtered_by_client(root, values, client_name):
     resultFilter = filter(lambda row: client_name.lower() in row[1].lower(), values)
     resultList = list(resultFilter)
-    for r in range(0, len(resultList)):
-            for c in range(0, 7):
-                cell = Entry(root, width=10)
-                cell.grid(padx=5, pady=5, row=r+1, column=c)
-                cell.insert(0, '{}'.format(resultList[r][c]))
+    show_grid(root, resultList)
 
 # print all rows that match the model name
 def print_filtered_by_model(values, model_name):
