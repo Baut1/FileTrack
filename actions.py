@@ -90,9 +90,14 @@ def show_by_id(root, values, id):
                 cell.insert(0, '{}'.format(row[c]))
 
 # show all rows that match the client name
-def show_filtered_by_client(values, client_name):
-    result = filter(lambda row: client_name.lower() in row[1].lower(), values)
-    print(list(result))
+def show_filtered_by_client(root, values, client_name):
+    resultFilter = filter(lambda row: client_name.lower() in row[1].lower(), values)
+    resultList = list(resultFilter)
+    for r in range(0, len(resultList)):
+            for c in range(0, 7):
+                cell = Entry(root, width=10)
+                cell.grid(padx=5, pady=5, row=r+1, column=c)
+                cell.insert(0, '{}'.format(resultList[r][c]))
 
 # print all rows that match the model name
 def print_filtered_by_model(values, model_name):
@@ -181,9 +186,11 @@ class MyMainPanel:
         root = root
         frame = frame
 
+        # search input
         searchEntry = Entry(root, width=10)
         searchEntry.grid(row=8, column=0)
-        # searchValue = searchEntry.get()
+
+        # action buttons
         btnShowById = Button(root,
                              text="Buscar por ID",
                              command=lambda:show_by_id(root,
@@ -191,12 +198,18 @@ class MyMainPanel:
                                                        searchEntry.get())
                              ).grid(row=8, column=1)
         
+        btnShowByClientName = Button(root,
+                                     text="Buscar por cliente",
+                                     command=lambda:show_filtered_by_client(root,
+                                                               values,
+                                                               searchEntry.get())
+                                     ).grid(row=8, column=2)
+        
         btnShowAll = Button(root,
                             text="Ver todos",
                             command=lambda:show_all(root, values)
                             ).grid(row=8, column=8)
         
-        # btnShowById = Button(root, text="Buscar por ID", command=lambda:show_by_id(root, values, "2")).grid(row=8, column=1)
         Label(root, text="ID").grid(row=0, column=0)
         Label(root, text="Nombre").grid(row=0, column=1)
         Label(root, text="email").grid(row=0, column=2)
