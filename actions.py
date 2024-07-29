@@ -89,8 +89,8 @@ def show_by_id(root, values, id):
                 cell.grid(padx=5, pady=5, row=1, column=c)
                 cell.insert(0, '{}'.format(row[c]))
 
-# print all rows that match the client name
-def print_filtered_by_client(values, client_name):
+# show all rows that match the client name
+def show_filtered_by_client(values, client_name):
     result = filter(lambda row: client_name.lower() in row[1].lower(), values)
     print(list(result))
 
@@ -181,9 +181,22 @@ class MyMainPanel:
         root = root
         frame = frame
 
-        # btnFindById = Button(root, text="Ver todos", command=lambda:show_all(root, values)).grid(row=9, column=0)
-        btnShowAll = Button(root, text="Ver todos", command=lambda:show_all(root, values)).grid(row=9, column=0)
-        btnShowById = Button(root, text="Buscar por ID", command=lambda:show_by_id(root, values, "2")).grid(row=9, column=1)
+        searchEntry = Entry(root, width=10)
+        searchEntry.grid(row=8, column=0)
+        # searchValue = searchEntry.get()
+        btnShowById = Button(root,
+                             text="Buscar por ID",
+                             command=lambda:show_by_id(root,
+                                                       values,
+                                                       searchEntry.get())
+                             ).grid(row=8, column=1)
+        
+        btnShowAll = Button(root,
+                            text="Ver todos",
+                            command=lambda:show_all(root, values)
+                            ).grid(row=8, column=8)
+        
+        # btnShowById = Button(root, text="Buscar por ID", command=lambda:show_by_id(root, values, "2")).grid(row=8, column=1)
         Label(root, text="ID").grid(row=0, column=0)
         Label(root, text="Nombre").grid(row=0, column=1)
         Label(root, text="email").grid(row=0, column=2)
