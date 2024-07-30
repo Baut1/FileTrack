@@ -99,10 +99,11 @@ def show_filtered_by_client(root, values, client_name):
     resultList = list(resultFilter)
     show_grid(root, resultList)
 
-# print all rows that match the model name
-def print_filtered_by_model(values, model_name):
-    result = filter(lambda row: model_name.lower() in row[3].lower(), values)
-    print(list(result))
+# show all rows that match the model name
+def show_filtered_by_model(root, values, model_name):
+    resultFilter = filter(lambda row: model_name.lower() in row[2].lower(), values)
+    resultList = list(resultFilter)
+    show_grid(root, resultList)
 
 # print all rows that match the date
 def print_filtered_by_date(values, date):
@@ -201,6 +202,13 @@ class MyMainPanel:
         btnShowByClientName = Button(root,
                                      text="Buscar por cliente",
                                      command=lambda:show_filtered_by_client(root,
+                                                               values,
+                                                               searchEntry.get())
+                                     ).grid(row=8, column=2)
+        
+        btnShowByModel = Button(root,
+                                     text="Buscar por modelo",
+                                     command=lambda:show_filtered_by_model(root,
                                                                values,
                                                                searchEntry.get())
                                      ).grid(row=8, column=2)
