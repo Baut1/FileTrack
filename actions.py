@@ -75,6 +75,7 @@ class MyMainPanel:
         root = root
         frame = frame
 
+        # frame for the cells to be filled with the data
         self.widgets = []
         self.cells_frame = Frame(root)
 
@@ -115,6 +116,14 @@ class MyMainPanel:
                                                                                 searchEntry.get())
                                      ).grid(row=8,
                                             column=3)
+        
+        btnShowByDate = Button(root,
+                                     text="Buscar por fecha",
+                                     command=lambda:self.show_filtered_by_date(root,
+                                                                               values,
+                                                                               searchEntry.get())
+                                     ).grid(row=8,
+                                            column=4)
         
         btnShowAll = Button(root,
                             text="Ver todos",
@@ -168,10 +177,11 @@ class MyMainPanel:
         resultList = list(resultFilter)
         self.show_grid(root, resultList)
 
-    # print all rows that match the date
-    def print_filtered_by_date(values, date):
-        result = filter(lambda row: date in row[5], values)
-        print(list(result))
+    # show all rows that match the date
+    def show_filtered_by_date(self, root, values, date):
+        resultFilter = filter(lambda row: date in row[3], values)
+        resultList = list(resultFilter)
+        self.show_grid(root, resultList)
 
     # print most recent 10 rows
     def print_filtered_by_date_last_ten(values):
