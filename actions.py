@@ -125,6 +125,13 @@ class MyMainPanel:
                                      ).grid(row=8,
                                             column=4)
         
+        btnShowByDateLastTen = Button(root,
+                                     text="Buscar ultimos",
+                                     command=lambda:self.show_filtered_by_date_last_ten(root,
+                                                                                        values)
+                                     ).grid(row=8,
+                                            column=5)
+        
         btnShowAll = Button(root,
                             text="Ver todos",
                             command=lambda:self.show_all(root,
@@ -184,10 +191,11 @@ class MyMainPanel:
         resultsList = self.filterBy(values, date, 3)
         self.show_grid(root, resultsList)
 
-    # print most recent 10 rows
-    def print_filtered_by_date_last_ten(values):
-        values.sort(key = lambda row: row[5], reverse=True)
-        print(list(values[0:10]))
+    # show most recent 10 rows
+    def show_filtered_by_date_last_ten(self, root, values):
+        arrays_sorted = sorted(values, key=lambda x: x[3], reverse=True)
+        resultsList = arrays_sorted[:3]
+        self.show_grid(root, resultsList)
 
     # find the row index ("range") given an id
     def find_row_index(sheet_values, column_index, target_value):
