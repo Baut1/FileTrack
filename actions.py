@@ -148,7 +148,11 @@ class MyMainPanel:
                     cell.grid(padx=5, pady=5, row=r+1, column=c)
                     cell.insert(0, '{}'.format(listValues[r][c]))
                     self.widgets.append(cell)
-                    
+
+    def filterBy(self, values, searchValue, rowIndex):
+        resultFilter = filter(lambda row: searchValue.lower() in row[rowIndex].lower(), values)
+        resultList = list(resultFilter)
+        return resultList
 
     def clear_cells(self):
         for widget in self.widgets:
@@ -167,21 +171,18 @@ class MyMainPanel:
 
     # show all rows that match the client name
     def show_filtered_by_client(self, root, values, client_name):
-        resultFilter = filter(lambda row: client_name.lower() in row[1].lower(), values)
-        resultList = list(resultFilter)
-        self.show_grid(root, resultList)
+        resultsList = self.filterBy(values, client_name, 1)
+        self.show_grid(root, resultsList)
 
     # show all rows that match the model name
     def show_filtered_by_model(self, root, values, model_name):
-        resultFilter = filter(lambda row: model_name.lower() in row[2].lower(), values)
-        resultList = list(resultFilter)
-        self.show_grid(root, resultList)
+        resultsList = self.filterBy(values, model_name, 2)
+        self.show_grid(root, resultsList)
 
     # show all rows that match the date
     def show_filtered_by_date(self, root, values, date):
-        resultFilter = filter(lambda row: date in row[3], values)
-        resultList = list(resultFilter)
-        self.show_grid(root, resultList)
+        resultsList = self.filterBy(values, date, 3)
+        self.show_grid(root, resultsList)
 
     # print most recent 10 rows
     def print_filtered_by_date_last_ten(values):
