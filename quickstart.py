@@ -7,7 +7,7 @@ from actions import *
 # interfaz grafica
 root = Tk()
 root.title("Archivos")
-root.geometry("800x500")
+root.geometry("900x600")
 
 def btn_nueva_ventana():
   mainFrame = Frame(root)
