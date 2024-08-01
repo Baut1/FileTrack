@@ -1,5 +1,8 @@
 # imports
 from tkinter import *
+# ttkbootstrap
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 
 # import functions/methods
 from actions import *
