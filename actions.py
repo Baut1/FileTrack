@@ -81,16 +81,16 @@ class MyMainPanel:
 
         # search input
         searchEntry = Entry(root, width=10)
-        searchEntry.grid(row=8, column=0)
+        searchEntry.grid(row=1, column=0)
 
         # column info
-        Label(root, text="ID").grid(row=0, column=0)
-        Label(root, text="Nombre").grid(row=0, column=1)
-        Label(root, text="email").grid(row=0, column=2)
-        Label(root, text="articulo").grid(row=0, column=3)
-        Label(root, text="detalle").grid(row=0, column=4)
-        Label(root, text="fecha").grid(row=0, column=5)
-        Label(root, text="comentario").grid(row=0, column=6)
+        Label(root, text="ID").grid(row=2, column=0)
+        Label(root, text="Nombre").grid(row=2, column=1)
+        Label(root, text="email").grid(row=2, column=2)
+        Label(root, text="articulo").grid(row=2, column=3)
+        Label(root, text="detalle").grid(row=2, column=4)
+        Label(root, text="fecha").grid(row=2, column=5)
+        Label(root, text="comentario").grid(row=2, column=6)
 
         # action buttons
         btnShowById = Button(root,
@@ -98,52 +98,59 @@ class MyMainPanel:
                              command=lambda:self.show_by_id(root,
                                                             values,
                                                             searchEntry.get())
-                             ).grid(row=8,
-                                    column=1)
+                             ).grid(row=0,
+                                    column=0,
+                                    padx=1, pady=1)
         
         btnShowByClientName = Button(root,
                                      text="Buscar por cliente",
                                      command=lambda:self.show_filtered_by_client(root,
                                                                                 values,
                                                                                 searchEntry.get())
-                                     ).grid(row=8,
-                                            column=2)
+                                     ).grid(row=0,
+                                            column=1,
+                                    padx=1, pady=1)
         
         btnShowByModel = Button(root,
                                      text="Buscar por modelo",
                                      command=lambda:self.show_filtered_by_model(root,
                                                                                 values,
                                                                                 searchEntry.get())
-                                     ).grid(row=8,
-                                            column=3)
+                                     ).grid(row=0,
+                                            column=2,
+                                    padx=1, pady=1)
         
         btnShowByDate = Button(root,
                                      text="Buscar por fecha",
                                      command=lambda:self.show_filtered_by_date(root,
                                                                                values,
                                                                                searchEntry.get())
-                                     ).grid(row=8,
-                                            column=4)
+                                     ).grid(row=0,
+                                            column=3,
+                                    padx=1, pady=1)
         
         btnShowByDateLastTen = Button(root,
                                      text="Buscar ultimos",
                                      command=lambda:self.show_filtered_by_date_last_ten(root,
                                                                                         values)
-                                     ).grid(row=8,
-                                            column=5)
+                                     ).grid(row=0,
+                                            column=4,
+                                    padx=1, pady=1)
         
         btnShowAll = Button(root,
                             text="Ver todos",
                             command=lambda:self.show_all(root,
                                                          values)
-                            ).grid(row=8,
-                                   column=8)
+                            ).grid(row=0,
+                                   column=5,
+                                    padx=1, pady=1)
         
         btnAdd = Button(root,
                         text="Crear",
                         command=lambda:self.add(values)
-                        ).grid(row=8,
-                               column=9)
+                        ).grid(row=0,
+                               column=6,
+                                    padx=1, pady=1)
 
     # actions
     # shows grid when given values, called by other filtering and sorting functions
@@ -152,7 +159,7 @@ class MyMainPanel:
         for r in range(0, len(listValues)):
                 for c in range(0, 7):
                     cell = Entry(root, width=10)
-                    cell.grid(padx=5, pady=5, row=r+1, column=c)
+                    cell.grid(padx=5, pady=5, row=r+3, column=c)
                     cell.insert(0, '{}'.format(listValues[r][c]))
                     self.widgets.append(cell)
 
