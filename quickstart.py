@@ -8,7 +8,7 @@ from ttkbootstrap.constants import *
 from actions import *
 
 # interfaz grafica
-root = Tk()
+root = ttk.Window(themename="superhero")
 root.title("Archivos")
 root.geometry("900x600")
 
@@ -18,7 +18,10 @@ def btn_nueva_ventana():
   mainPanel = MyMainPanel(root, mainFrame)
   abrir.destroy()
 
-abrir = Button(root, text="Abrir", command=btn_nueva_ventana)
+abrir = ttk.Button(root,
+                   text="Abrir",
+                   cursor="hand2",
+                   command=btn_nueva_ventana)
 abrir.place(relx=0.5, rely=0.5, anchor='center')
 
 # execute main()

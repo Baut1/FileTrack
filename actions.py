@@ -83,7 +83,7 @@ class MyMainPanel:
         self.cells_frame = Frame(root)
 
         # search input
-        searchEntry = Entry(root, width=10)
+        searchEntry = ttk.Entry(root, width=10)
         searchEntry.grid(row=1, column=0)
 
         # column info
@@ -96,8 +96,10 @@ class MyMainPanel:
         Label(root, text="comentario").grid(row=2, column=6)
 
         # action buttons
-        btnShowById = Button(root,
+        btnShowById = ttk.Button(root,
                              text="Buscar por ID",
+                             bootstyle=PRIMARY,
+                             cursor="hand2",
                              command=lambda:self.show_by_id(root,
                                                             values,
                                                             searchEntry.get())
@@ -105,8 +107,10 @@ class MyMainPanel:
                                     column=0,
                                     padx=1, pady=1)
         
-        btnShowByClientName = Button(root,
+        btnShowByClientName = ttk.Button(root,
                                      text="Buscar por cliente",
+                                     bootstyle=PRIMARY,
+                                     cursor="hand2",
                                      command=lambda:self.show_filtered_by_client(root,
                                                                                 values,
                                                                                 searchEntry.get())
@@ -114,8 +118,10 @@ class MyMainPanel:
                                             column=1,
                                     padx=1, pady=1)
         
-        btnShowByModel = Button(root,
+        btnShowByModel = ttk.Button(root,
                                      text="Buscar por modelo",
+                                     bootstyle=PRIMARY,
+                                     cursor="hand2",
                                      command=lambda:self.show_filtered_by_model(root,
                                                                                 values,
                                                                                 searchEntry.get())
@@ -123,8 +129,10 @@ class MyMainPanel:
                                             column=2,
                                     padx=1, pady=1)
         
-        btnShowByDate = Button(root,
+        btnShowByDate = ttk.Button(root,
                                      text="Buscar por fecha",
+                                     bootstyle=PRIMARY,
+                                     cursor="hand2",
                                      command=lambda:self.show_filtered_by_date(root,
                                                                                values,
                                                                                searchEntry.get())
@@ -132,24 +140,30 @@ class MyMainPanel:
                                             column=3,
                                     padx=1, pady=1)
         
-        btnShowByDateLastTen = Button(root,
+        btnShowByDateLastTen = ttk.Button(root,
                                      text="Buscar ultimos",
+                                     bootstyle=PRIMARY,
+                                     cursor="hand2",
                                      command=lambda:self.show_filtered_by_date_last_ten(root,
                                                                                         values)
                                      ).grid(row=0,
                                             column=4,
                                     padx=1, pady=1)
         
-        btnShowAll = Button(root,
+        btnShowAll = ttk.Button(root,
                             text="Ver todos",
+                            bootstyle=PRIMARY,
+                            cursor="hand2",
                             command=lambda:self.show_all(root,
                                                          values)
                             ).grid(row=0,
                                    column=5,
                                     padx=1, pady=1)
         
-        btnAdd = Button(root,
+        btnAdd = ttk.Button(root,
                         text="Crear",
+                        bootstyle=SUCCESS,
+                        cursor="hand2",
                         command=lambda:self.add(values)
                         ).grid(row=0,
                                column=6,
