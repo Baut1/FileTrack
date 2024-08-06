@@ -6,6 +6,7 @@ from tkinter import *
 # ttkbootstrap
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
+from ttkbootstrap.dialogs import Messagebox
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -75,7 +76,7 @@ def main():
 
 class MyMainPanel:
     def __init__(self, root, frame) -> None:
-        root = root
+        self.root = root
         frame = frame
 
         # frame for the cells to be filled with the data
@@ -96,78 +97,78 @@ class MyMainPanel:
         Label(root, text="comentario").grid(row=2, column=6)
 
         # action buttons
-        btnShowById = ttk.Button(root,
-                             text="Buscar por ID",
-                             bootstyle=PRIMARY,
-                             cursor="hand2",
-                             command=lambda:self.show_by_id(root,
+        ttk.Button(root,
+                   text="Buscar por ID",
+                   bootstyle=PRIMARY,
+                   cursor="hand2",
+                   command=lambda:self.show_by_id(root,
+                                                  values,
+                                                  searchEntry.get())
+                    ).grid(row=0,
+                        column=0,
+                        padx=1, pady=1)
+        
+        ttk.Button(root,
+                        text="Buscar por cliente",
+                        bootstyle=PRIMARY,
+                        cursor="hand2",
+                        command=lambda:self.show_filtered_by_client(root,
+                                                                values,
+                                                                searchEntry.get())
+                        ).grid(row=0,
+                            column=1,
+                            padx=1, pady=1)
+        
+        ttk.Button(root,
+                    text="Buscar por modelo",
+                    bootstyle=PRIMARY,
+                    cursor="hand2",
+                    command=lambda:self.show_filtered_by_model(root,
                                                             values,
                                                             searchEntry.get())
-                             ).grid(row=0,
-                                    column=0,
-                                    padx=1, pady=1)
+                    ).grid(row=0,
+                        column=2,
+                        padx=1, pady=1)
         
-        btnShowByClientName = ttk.Button(root,
-                                     text="Buscar por cliente",
-                                     bootstyle=PRIMARY,
-                                     cursor="hand2",
-                                     command=lambda:self.show_filtered_by_client(root,
-                                                                                values,
-                                                                                searchEntry.get())
-                                     ).grid(row=0,
-                                            column=1,
-                                    padx=1, pady=1)
+        ttk.Button(root,
+                    text="Buscar por fecha",
+                    bootstyle=PRIMARY,
+                    cursor="hand2",
+                    command=lambda:self.show_filtered_by_date(root,
+                                                            values,
+                                                            searchEntry.get())
+                    ).grid(row=0,
+                        column=3,
+                        padx=1, pady=1)
         
-        btnShowByModel = ttk.Button(root,
-                                     text="Buscar por modelo",
-                                     bootstyle=PRIMARY,
-                                     cursor="hand2",
-                                     command=lambda:self.show_filtered_by_model(root,
-                                                                                values,
-                                                                                searchEntry.get())
-                                     ).grid(row=0,
-                                            column=2,
-                                    padx=1, pady=1)
+        ttk.Button(root,
+                    text="Buscar ultimos",
+                    bootstyle=PRIMARY,
+                    cursor="hand2",
+                    command=lambda:self.show_filtered_by_date_last_ten(root,
+                                                                    values)
+                    ).grid(row=0,
+                        column=4,
+                        padx=1, pady=1)
         
-        btnShowByDate = ttk.Button(root,
-                                     text="Buscar por fecha",
-                                     bootstyle=PRIMARY,
-                                     cursor="hand2",
-                                     command=lambda:self.show_filtered_by_date(root,
-                                                                               values,
-                                                                               searchEntry.get())
-                                     ).grid(row=0,
-                                            column=3,
-                                    padx=1, pady=1)
+        ttk.Button(root,
+                    text="Ver todos",
+                    bootstyle=PRIMARY,
+                    cursor="hand2",
+                    command=lambda:self.show_all(root,
+                                                    values)
+                    ).grid(row=0,
+                            column=5,
+                            padx=1, pady=1)
         
-        btnShowByDateLastTen = ttk.Button(root,
-                                     text="Buscar ultimos",
-                                     bootstyle=PRIMARY,
-                                     cursor="hand2",
-                                     command=lambda:self.show_filtered_by_date_last_ten(root,
-                                                                                        values)
-                                     ).grid(row=0,
-                                            column=4,
-                                    padx=1, pady=1)
-        
-        btnShowAll = ttk.Button(root,
-                            text="Ver todos",
-                            bootstyle=PRIMARY,
-                            cursor="hand2",
-                            command=lambda:self.show_all(root,
-                                                         values)
-                            ).grid(row=0,
-                                   column=5,
-                                    padx=1, pady=1)
-        
-        btnAdd = ttk.Button(root,
-                        text="Crear",
-                        bootstyle=SUCCESS,
-                        cursor="hand2",
-                        command=lambda:self.add(values)
-                        ).grid(row=0,
-                               column=6,
-                                    padx=1, pady=1)
+        ttk.Button(root,
+                    text="Crear",
+                    bootstyle=SUCCESS,
+                    cursor="hand2",
+                    command=lambda:self.open_new_window()
+                    ).grid(row=0,
+                            column=6,
+                                padx=1, pady=1)
 
     # actions
     # shows grid when given values, called by other filtering and sorting functions
@@ -264,10 +265,10 @@ class MyMainPanel:
             print(f"Row with '{column_name}' = '{target_id}' not found.")
 
     # add new row to the table
-    def add(sheet_values):
+    def add(self, sheet_values, entry_values):
             index_to_extract = 0
             ids_array = [int(sub_array[index_to_extract]) for sub_array in sheet_values] # get array of ids
-            new_row_values = [max(ids_array) + 1, 'Ana', 'Samsung S23', '2024-02-01', 'Boton roto', 'agonzalez@gmail.com', 'asd']
+            new_row_values = [max(ids_array) + 1] + entry_values
             
             try:
                     service = build("sheets", "v4", credentials=creds)
@@ -288,6 +289,58 @@ class MyMainPanel:
             except HttpError as err:
                 print(err)
 
+    # message dialog check if user is sure
+    def on_ok(self, values, entry_values):
+        self.add(values, entry_values)
+        
+    def ask_ok_cancel(self, values, entry_values):
+        response = Messagebox.okcancel("Se creará un nuevo expediente", "¿Quieres continuar?")
+        if response == "OK":
+            self.on_ok(values, entry_values)
+
+    # new window to add new items to db
+    def open_new_window(self):
+        new_window = ttk.Toplevel(self.root)
+        new_window.title("Crear un nuevo expediente")
+
+        # inicializar entries
+        entries = []
+
+        # cell labels
+        Label(new_window, text="Nombre").grid(row=0, column=0)
+        Label(new_window, text="email").grid(row=0, column=1)
+        Label(new_window, text="articulo").grid(row=0, column=2)
+        Label(new_window, text="detalle").grid(row=0, column=3)
+        Label(new_window, text="fecha").grid(row=0, column=4)
+        Label(new_window, text="comentario").grid(row=0, column=5)
+
+        # entry cells
+        for c in range(0, 6):
+            cell = Entry(new_window, width=10)
+            cell.grid(padx=5, pady=5, row=1, column=c)
+            entries.append(cell)
+
+        # get entries and try to add()
+        def get_new_window_entries():
+            entry_values = [entry.get() for entry in entries]
+            self.ask_ok_cancel(values, entry_values)
+
+        # buttons to confirm or cancel
+        ttk.Button(new_window,
+                    text="Crear",
+                    bootstyle=SUCCESS,
+                    cursor="hand2",
+                    command=lambda:get_new_window_entries()
+                    ).grid(row=2,
+                           column=4,
+                           padx=10,
+                           pady=10)
+        
+        ttk.Button(new_window,
+                   text="Cerrar",
+                   bootstyle="danger",
+                   command=new_window.destroy
+                   ).grid(row=2, column=5, padx=10, pady=10)
 
 if __name__ == "__main__":
   main()
