@@ -87,16 +87,15 @@ class MyMainPanel:
         searchEntry = ttk.Entry(root, width=10)
         searchEntry.grid(row=1, column=0)
 
-        # column info
-        Label(root, text="ID").grid(row=2, column=0)
-        Label(root, text="Nombre").grid(row=2, column=1)
-        Label(root, text="email").grid(row=2, column=2)
-        Label(root, text="articulo").grid(row=2, column=3)
-        Label(root, text="detalle").grid(row=2, column=4)
-        Label(root, text="fecha").grid(row=2, column=5)
-        Label(root, text="comentario").grid(row=2, column=6)
+        # list of texts for the labels
+        label_texts = ["ID", "Cliente", "Modelo", "Fecha", "Problema", "Email", "Comentario"]
+        # create and place labels
+        for i, text in enumerate(label_texts):
+            label = ttk.Label(root, text=text)
+            label.grid(row=2, column=i, padx=10, pady=5)  # Arrange labels in a grid
 
         # action buttons
+        # search by id
         ttk.Button(root,
                    text="Buscar por ID",
                    bootstyle=PRIMARY,
@@ -107,7 +106,7 @@ class MyMainPanel:
                     ).grid(row=0,
                         column=0,
                         padx=1, pady=1)
-        
+        # search by clientname
         ttk.Button(root,
                         text="Buscar por cliente",
                         bootstyle=PRIMARY,
@@ -118,7 +117,7 @@ class MyMainPanel:
                         ).grid(row=0,
                             column=1,
                             padx=1, pady=1)
-        
+        # search by model name
         ttk.Button(root,
                     text="Buscar por modelo",
                     bootstyle=PRIMARY,
@@ -129,7 +128,7 @@ class MyMainPanel:
                     ).grid(row=0,
                         column=2,
                         padx=1, pady=1)
-        
+        # search by date
         ttk.Button(root,
                     text="Buscar por fecha",
                     bootstyle=PRIMARY,
@@ -140,7 +139,7 @@ class MyMainPanel:
                     ).grid(row=0,
                         column=3,
                         padx=1, pady=1)
-        
+        # search last 10
         ttk.Button(root,
                     text="Buscar ultimos",
                     bootstyle=PRIMARY,
@@ -150,7 +149,7 @@ class MyMainPanel:
                     ).grid(row=0,
                         column=4,
                         padx=1, pady=1)
-        
+        # retrieve all
         ttk.Button(root,
                     text="Ver todos",
                     bootstyle=PRIMARY,
@@ -160,7 +159,7 @@ class MyMainPanel:
                     ).grid(row=0,
                             column=5,
                             padx=1, pady=1)
-        
+        # create new
         ttk.Button(root,
                     text="Crear",
                     bootstyle=SUCCESS,
@@ -290,9 +289,10 @@ class MyMainPanel:
                 print(err)
 
     # message dialog check if user is sure
+    # if user selects OK
     def on_ok(self, values, entry_values):
         self.add(values, entry_values)
-        
+    # dialog
     def ask_ok_cancel(self, values, entry_values):
         response = Messagebox.okcancel("Se creará un nuevo expediente", "¿Quieres continuar?")
         if response == "OK":
@@ -306,20 +306,18 @@ class MyMainPanel:
         # inicializar entries
         entries = []
 
-        # cell labels
-        Label(new_window, text="Nombre").grid(row=0, column=0)
-        Label(new_window, text="email").grid(row=0, column=1)
-        Label(new_window, text="articulo").grid(row=0, column=2)
-        Label(new_window, text="detalle").grid(row=0, column=3)
-        Label(new_window, text="fecha").grid(row=0, column=4)
-        Label(new_window, text="comentario").grid(row=0, column=5)
+        # list of texts for the labels
+        label_texts = ["Cliente", "Modelo", "Fecha", "Problema", "Email", "Comentario"]
+        # create and place labels
+        for i, text in enumerate(label_texts):
+            label = ttk.Label(new_window, text=text)
+            label.grid(row=0, column=i, padx=10, pady=5)  # Arrange labels in a grid
 
         # entry cells
         for c in range(0, 6):
             cell = Entry(new_window, width=10)
             cell.grid(padx=5, pady=5, row=1, column=c)
             entries.append(cell)
-
         # get entries and try to add()
         def get_new_window_entries():
             entry_values = [entry.get() for entry in entries]
