@@ -26,7 +26,7 @@ SAMPLE_SPREADSHEET_ID = os.environ.get('SPREADSHEET_ID')
 SAMPLE_RANGE_NAME = os.environ.get('RANGE_NAME')
 
 # intitialize data values
-values = [[]]
+sheet_values = [[]]
 creds = None
 
 # connection to the API
@@ -64,10 +64,10 @@ def main():
         .get(spreadsheetId=SAMPLE_SPREADSHEET_ID, range=SAMPLE_RANGE_NAME)
         .execute()
     )
-    global values
-    values = result.get("values", [])
+    global sheet_values
+    sheet_values = result.get("values", [])
 
-    if not values:
+    if not sheet_values:
       print("No data found.")
       return
     
@@ -101,7 +101,6 @@ class MyMainPanel:
                    bootstyle=PRIMARY,
                    cursor="hand2",
                    command=lambda:self.show_by_id(root,
-                                                  values,
                                                   searchEntry.get())
                     ).grid(row=0,
                         column=0,
@@ -112,7 +111,6 @@ class MyMainPanel:
                         bootstyle=PRIMARY,
                         cursor="hand2",
                         command=lambda:self.show_filtered_by_client(root,
-                                                                values,
                                                                 searchEntry.get())
                         ).grid(row=0,
                             column=1,
@@ -123,7 +121,6 @@ class MyMainPanel:
                     bootstyle=PRIMARY,
                     cursor="hand2",
                     command=lambda:self.show_filtered_by_model(root,
-                                                            values,
                                                             searchEntry.get())
                     ).grid(row=0,
                         column=2,
@@ -134,7 +131,6 @@ class MyMainPanel:
                     bootstyle=PRIMARY,
                     cursor="hand2",
                     command=lambda:self.show_filtered_by_date(root,
-                                                            values,
                                                             searchEntry.get())
                     ).grid(row=0,
                         column=3,
@@ -144,8 +140,7 @@ class MyMainPanel:
                     text="Buscar ultimos",
                     bootstyle=PRIMARY,
                     cursor="hand2",
-                    command=lambda:self.show_filtered_by_date_last_ten(root,
-                                                                    values)
+                    command=lambda:self.show_filtered_by_date_last_ten(root)
                     ).grid(row=0,
                         column=4,
                         padx=1, pady=1)
@@ -154,8 +149,7 @@ class MyMainPanel:
                     text="Ver todos",
                     bootstyle=PRIMARY,
                     cursor="hand2",
-                    command=lambda:self.show_all(root,
-                                                    values)
+                    command=lambda:self.show_all(root)
                     ).grid(row=0,
                             column=5,
                             padx=1, pady=1)
@@ -177,7 +171,7 @@ class MyMainPanel:
         
         # loop through the whole list
         for r in range(0, len(listValues)):
-            row_id = listValues[r][0]
+            target_id = listValues[r][0]
             id_label = ttk.Label(root, text=listValues[r][0])
             id_label.grid(row=r+3, column=0, padx=10, pady=5)
             self.widgets.append(id_label)
@@ -193,16 +187,16 @@ class MyMainPanel:
                 entries.append(cell)
             
             # get entries and try to update_by_id()
-            def get_updated_entries(entries, row_id):
+            def get_updated_entries(entries, target_id):
                 updated_values = [entry.get() for entry in entries]
-                self.update_by_id(values, row_id, updated_values)
+                self.ask_ok_cancel(target_id=target_id, updated_values=updated_values, action="UPDATE")
             
             # edit button
             edit_button = ttk.Button(root,
                 text="Editar",
                 bootstyle="primary",
                 cursor="hand2",
-                command=lambda entries=entries, row_id=row_id: get_updated_entries(entries, row_id)
+                command=lambda entries=entries, target_id=target_id: get_updated_entries(entries, target_id)
                 )
             edit_button.grid(row=r+3, column=8,
                         padx=1, pady=1)
@@ -212,12 +206,12 @@ class MyMainPanel:
                 text="Eliminar",
                 bootstyle="danger",
                 cursor="hand2",
-                command=lambda row_id=row_id: self.delete_by_id(values, row_id))
+                command=lambda target_id=target_id: self.ask_ok_cancel(target_id=target_id, action="DELETE"))
             delete_button.grid(row=r+3, column=9)
             self.widgets.append(delete_button)
 
-    def filterBy(self, values, searchValue, rowIndex):
-        resultFilter = filter(lambda row: searchValue.lower() in row[rowIndex].lower(), values)
+    def filterBy(self, searchValue, rowIndex):
+        resultFilter = filter(lambda row: searchValue.lower() in row[rowIndex].lower(), sheet_values)
         resultList = list(resultFilter)
         return resultList
 
@@ -227,38 +221,38 @@ class MyMainPanel:
         self.widgets = []
 
     # show all rows
-    def show_all(self, root, values):
-        self.show_grid(root, values)
+    def show_all(self, root):
+        self.show_grid(root, sheet_values)
 
     # show row given its id
-    def show_by_id(self, root, values, id):
-        for row in values:
+    def show_by_id(self, root, id):
+        for row in sheet_values:
             if row[0] == id:
                 self.show_grid(root, [row])
 
     # show all rows that match the client name
-    def show_filtered_by_client(self, root, values, client_name):
-        resultsList = self.filterBy(values, client_name, 1)
+    def show_filtered_by_client(self, root, client_name):
+        resultsList = self.filterBy(sheet_values, client_name, 1)
         self.show_grid(root, resultsList)
 
     # show all rows that match the model name
-    def show_filtered_by_model(self, root, values, model_name):
-        resultsList = self.filterBy(values, model_name, 2)
+    def show_filtered_by_model(self, root, model_name):
+        resultsList = self.filterBy(sheet_values, model_name, 2)
         self.show_grid(root, resultsList)
 
     # show all rows that match the date
-    def show_filtered_by_date(self, root, values, date):
-        resultsList = self.filterBy(values, date, 3)
+    def show_filtered_by_date(self, root, date):
+        resultsList = self.filterBy(sheet_values, date, 3)
         self.show_grid(root, resultsList)
 
     # show most recent 10 rows
-    def show_filtered_by_date_last_ten(self, root, values):
-        arrays_sorted = sorted(values, key=lambda x: x[3], reverse=True)
+    def show_filtered_by_date_last_ten(self, root):
+        arrays_sorted = sorted(sheet_values, key=lambda x: x[3], reverse=True)
         resultsList = arrays_sorted[:3]
         self.show_grid(root, resultsList)
 
     # find the row index ("range") given an id
-    def find_row_index(self, sheet_values, column_index, target_value):
+    def find_row_index(self, column_index, target_value):
         try: 
             for i, row in enumerate(sheet_values):
                 if len(row) > column_index and row[column_index] == str(target_value):
@@ -268,12 +262,12 @@ class MyMainPanel:
             print(err)
 
     # update row chosen by its id
-    def update_by_id(self, sheet_values, target_id, updated_values):
+    def update_by_id(self, target_id, updated_values):
         column_name = 'id'
         # Find the row index based on the 'id' column
         # column_index = sheet_values[0].index(column_name) if sheet_values and column_name in sheet_values[0] else None
         column_index = 0
-        row_index = self.find_row_index(sheet_values, column_index, target_id)
+        row_index = self.find_row_index(column_index, target_id)
 
         body = {
             'values': [updated_values]
@@ -302,7 +296,7 @@ class MyMainPanel:
             print(f"Row with '{column_name}' = '{target_id}' not found.")
 
     # add new row to the table
-    def add(self, sheet_values, entry_values):
+    def add(self, entry_values):
             index_to_extract = 0
             ids_array = [int(sub_array[index_to_extract]) for sub_array in sheet_values] # get array of ids
             new_row_values = [max(ids_array) + 1] + entry_values
@@ -326,10 +320,10 @@ class MyMainPanel:
             except HttpError as err:
                 print(err)
 
-    def delete_by_id(self, sheet_values, target_id):
+    def delete_by_id(self, target_id):
         # Find the row index based on the 'id' column
         column_index = 0
-        row_index = self.find_row_index(sheet_values, column_index, target_id) - 1
+        row_index = self.find_row_index(column_index, target_id) - 1
 
         request_body = {
             'requests': [
@@ -363,13 +357,21 @@ class MyMainPanel:
     
     # message dialog check if user is sure
     # if user selects OK
-    def on_ok(self, values, entry_values):
-        self.add(values, entry_values)
+    def on_ok(self, action, target_id=None, entry_values=None, updated_values=None):
+        match action:
+            case "ADD":
+                self.add(entry_values)
+            case "UPDATE":
+                self.update_by_id(target_id, updated_values)
+            case "DELETE":
+                self.delete_by_id(target_id)
+            case _:
+                return "Something's wrong"
     # dialog
-    def ask_ok_cancel(self, values, entry_values):
-        response = Messagebox.okcancel("Se creará un nuevo expediente", "¿Quieres continuar?")
+    def ask_ok_cancel(self, action, target_id=None, entry_values=None, updated_values=None):
+        response = Messagebox.okcancel("Esta accion es irreversible", "¿Quieres continuar?")
         if response == "OK":
-            self.on_ok(values, entry_values)
+            self.on_ok(action, target_id, entry_values, updated_values)
 
     # new window to add new items to db
     def open_new_window(self):
@@ -394,7 +396,7 @@ class MyMainPanel:
         # get entries and try to add()
         def get_new_window_entries():
             entry_values = [entry.get() for entry in entries]
-            self.ask_ok_cancel(values, entry_values)
+            self.ask_ok_cancel(entry_values=entry_values, action="ADD")
 
         # buttons to confirm or cancel
         ttk.Button(new_window,
