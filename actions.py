@@ -207,6 +207,14 @@ class MyMainPanel:
             edit_button.grid(row=r+3, column=8,
                         padx=1, pady=1)
             self.widgets.append(edit_button)
+            # delete button
+            delete_button = ttk.Button(root,
+                text="Eliminar",
+                bootstyle="danger",
+                cursor="hand2",
+                command=lambda row_id=row_id: self.delete_by_id(values, row_id))
+            delete_button.grid(row=r+3, column=9)
+            self.widgets.append(delete_button)
 
     def filterBy(self, values, searchValue, rowIndex):
         resultFilter = filter(lambda row: searchValue.lower() in row[rowIndex].lower(), values)
@@ -318,6 +326,41 @@ class MyMainPanel:
             except HttpError as err:
                 print(err)
 
+    def delete_by_id(self, sheet_values, target_id):
+        # Find the row index based on the 'id' column
+        column_index = 0
+        row_index = self.find_row_index(sheet_values, column_index, target_id) - 1
+
+        request_body = {
+            'requests': [
+                {
+                    'deleteDimension': {
+                        'range': {
+                            'sheetId': 0,  # The sheet ID; default is the first sheet
+                            'dimension': 'ROWS',
+                            'startIndex': row_index, # Inclusive
+                            'endIndex': row_index + 1 # Exclusive
+                        }
+                    }
+                }
+            ]
+        }
+
+        if row_index is not None:
+            try:
+                service = build("sheets", "v4", credentials=creds)
+                # Call the Sheets API
+                response = service.spreadsheets().batchUpdate(
+                    spreadsheetId=SAMPLE_SPREADSHEET_ID,
+                    body=request_body
+                ).execute()
+                print(f"Row {row_index + 1} deleted.")
+                
+            except HttpError as err:
+                print(err)
+        else:
+            print(f"Row with 'ID' = '{target_id}' not found.")
+    
     # message dialog check if user is sure
     # if user selects OK
     def on_ok(self, values, entry_values):
