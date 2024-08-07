@@ -172,13 +172,41 @@ class MyMainPanel:
     # actions
     # shows grid when given values, called by other filtering and sorting functions
     def show_grid(self, root, listValues):
+        # clear existing grid
         self.clear_cells()
+        
+        # loop through the whole list
         for r in range(0, len(listValues)):
-                for c in range(0, 7):
-                    cell = Entry(root, width=10)
-                    cell.grid(padx=5, pady=5, row=r+3, column=c)
-                    cell.insert(0, '{}'.format(listValues[r][c]))
-                    self.widgets.append(cell)
+            row_id = listValues[r][0]
+            id_label = ttk.Label(root, text=listValues[r][0])
+            id_label.grid(row=r+3, column=0, padx=10, pady=5)
+            self.widgets.append(id_label)
+
+            # initialize entries
+            entries = []
+            # loop inside the row for every value
+            for c in range(1, 7):
+                cell = Entry(root, width=10)
+                cell.grid(padx=5, pady=5, row=r+3, column=c)
+                cell.insert(0, '{}'.format(listValues[r][c]))
+                self.widgets.append(cell)
+                entries.append(cell)
+            
+            # get entries and try to update_by_id()
+            def get_updated_entries(entries, row_id):
+                updated_values = [entry.get() for entry in entries]
+                self.update_by_id(values, row_id, updated_values)
+            
+            # edit button
+            edit_button = ttk.Button(root,
+                text="Editar",
+                bootstyle="primary",
+                cursor="hand2",
+                command=lambda entries=entries, row_id=row_id: get_updated_entries(entries, row_id)
+                )
+            edit_button.grid(row=r+3, column=8,
+                        padx=1, pady=1)
+            self.widgets.append(edit_button)
 
     def filterBy(self, values, searchValue, rowIndex):
         resultFilter = filter(lambda row: searchValue.lower() in row[rowIndex].lower(), values)
@@ -222,10 +250,9 @@ class MyMainPanel:
         self.show_grid(root, resultsList)
 
     # find the row index ("range") given an id
-    def find_row_index(sheet_values, column_index, target_value):
+    def find_row_index(self, sheet_values, column_index, target_value):
         try: 
             for i, row in enumerate(sheet_values):
-                print(row[column_index])
                 if len(row) > column_index and row[column_index] == str(target_value):
                     return i + 2  # Sheets API uses 1-based indices
             return None
@@ -233,13 +260,16 @@ class MyMainPanel:
             print(err)
 
     # update row chosen by its id
-    def update_by_id(self, sheet_values, target_id):
+    def update_by_id(self, sheet_values, target_id, updated_values):
         column_name = 'id'
-        new_value = 'New Value'
         # Find the row index based on the 'id' column
         # column_index = sheet_values[0].index(column_name) if sheet_values and column_name in sheet_values[0] else None
         column_index = 0
         row_index = self.find_row_index(sheet_values, column_index, target_id)
+
+        body = {
+            'values': [updated_values]
+        }
 
         if row_index is not None:
             try:
@@ -249,9 +279,9 @@ class MyMainPanel:
                 result = (
                     sheet.values()
                     .update(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                            range=f'Turnos!G{row_index}',
-                            valueInputOption='RAW',
-                            body={'values': [[new_value]]})
+                            range=f'Turnos!B{row_index}:G{row_index}',
+                            valueInputOption='USER_ENTERED',
+                            body=body)
                 )
                 # Execute the request
                 response = result.execute()
