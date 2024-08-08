@@ -84,56 +84,51 @@ class MyMainPanel:
         self.cells_frame = Frame(root)
 
         # search input
+        Label(root, text="Buscar:").grid(row=1, column=0)
         searchEntry = ttk.Entry(root, width=10)
-        searchEntry.grid(row=1, column=0)
+        searchEntry.grid(row=1, column=1)
 
         # list of texts for the labels
-        label_texts = ["ID", "Cliente", "Modelo", "Fecha", "Problema", "Email", "Comentario"]
+        label_texts = ["Cliente", "Modelo", "Fecha", "Problema", "Email", "Comentario"]
         # create and place labels
         for i, text in enumerate(label_texts):
             label = ttk.Label(root, text=text)
             label.grid(row=2, column=i, padx=10, pady=5)  # Arrange labels in a grid
 
         # action buttons
-        # search by id
-        ttk.Button(root,
-                   text="Buscar por ID",
-                   bootstyle=PRIMARY,
-                   cursor="hand2",
-                   command=lambda:self.show_by_id(root,
-                                                  searchEntry.get())
-                    ).grid(row=0,
-                        column=0,
-                        padx=1, pady=1)
         # search by clientname
         ttk.Button(root,
                         text="Buscar por cliente",
                         bootstyle=PRIMARY,
                         cursor="hand2",
-                        command=lambda:self.show_filtered_by_client(root,
-                                                                searchEntry.get())
+                        command=lambda:self.filter_by(root,
+                                                     searchEntry.get(),
+                                                     row_index = 1)
                         ).grid(row=0,
-                            column=1,
-                            padx=1, pady=1)
+                               column=0,
+                               padx=1,
+                               pady=1)
         # search by model name
         ttk.Button(root,
                     text="Buscar por modelo",
                     bootstyle=PRIMARY,
                     cursor="hand2",
-                    command=lambda:self.show_filtered_by_model(root,
-                                                            searchEntry.get())
+                    command=lambda:self.filter_by(root,
+                                                 searchEntry.get(),
+                                                 row_index=2)
                     ).grid(row=0,
-                        column=2,
+                        column=1,
                         padx=1, pady=1)
         # search by date
         ttk.Button(root,
                     text="Buscar por fecha",
                     bootstyle=PRIMARY,
                     cursor="hand2",
-                    command=lambda:self.show_filtered_by_date(root,
-                                                            searchEntry.get())
+                    command=lambda:self.filter_by(root,
+                                                 searchEntry.get(),
+                                                 row_index=3)
                     ).grid(row=0,
-                        column=3,
+                        column=2,
                         padx=1, pady=1)
         # search last 10
         ttk.Button(root,
@@ -142,7 +137,7 @@ class MyMainPanel:
                     cursor="hand2",
                     command=lambda:self.show_filtered_by_date_last_ten(root)
                     ).grid(row=0,
-                        column=4,
+                        column=3,
                         padx=1, pady=1)
         # retrieve all
         ttk.Button(root,
@@ -151,7 +146,7 @@ class MyMainPanel:
                     cursor="hand2",
                     command=lambda:self.show_all(root)
                     ).grid(row=0,
-                            column=5,
+                            column=4,
                             padx=1, pady=1)
         # create new
         ttk.Button(root,
@@ -160,10 +155,16 @@ class MyMainPanel:
                     cursor="hand2",
                     command=lambda:self.open_new_window()
                     ).grid(row=0,
-                            column=6,
+                            column=5,
                                 padx=1, pady=1)
 
     # actions
+    # clears existing grid
+    def clear_cells(self):
+        for widget in self.widgets:
+            widget.destroy()
+        self.widgets = []
+
     # shows grid when given values, called by other filtering and sorting functions
     def show_grid(self, root, listValues):
         # clear existing grid
@@ -172,16 +173,16 @@ class MyMainPanel:
         # loop through the whole list
         for r in range(0, len(listValues)):
             target_id = listValues[r][0]
-            id_label = ttk.Label(root, text=listValues[r][0])
-            id_label.grid(row=r+3, column=0, padx=10, pady=5)
-            self.widgets.append(id_label)
+            # id_label = ttk.Label(root, text=listValues[r][0])
+            # id_label.grid(row=r+3, column=0, padx=10, pady=5)
+            # self.widgets.append(id_label)
 
             # initialize entries
             entries = []
             # loop inside the row for every value
             for c in range(1, 7):
                 cell = Entry(root, width=10)
-                cell.grid(padx=5, pady=5, row=r+3, column=c)
+                cell.grid(padx=5, pady=5, row=r+3, column=c-1)
                 cell.insert(0, '{}'.format(listValues[r][c]))
                 self.widgets.append(cell)
                 entries.append(cell)
@@ -198,7 +199,7 @@ class MyMainPanel:
                 cursor="hand2",
                 command=lambda entries=entries, target_id=target_id: get_updated_entries(entries, target_id)
                 )
-            edit_button.grid(row=r+3, column=8,
+            edit_button.grid(row=r+3, column=7,
                         padx=1, pady=1)
             self.widgets.append(edit_button)
             # delete button
@@ -207,18 +208,14 @@ class MyMainPanel:
                 bootstyle="danger",
                 cursor="hand2",
                 command=lambda target_id=target_id: self.ask_ok_cancel(target_id=target_id, action="DELETE"))
-            delete_button.grid(row=r+3, column=9)
+            delete_button.grid(row=r+3, column=8)
             self.widgets.append(delete_button)
 
-    def filterBy(self, searchValue, rowIndex):
-        resultFilter = filter(lambda row: searchValue.lower() in row[rowIndex].lower(), sheet_values)
-        resultList = list(resultFilter)
-        return resultList
-
-    def clear_cells(self):
-        for widget in self.widgets:
-            widget.destroy()
-        self.widgets = []
+    # filter by entry value
+    def filter_by(self, root, search_value, row_index):
+        results_filter = filter(lambda row: search_value.lower() in row[row_index].lower(), sheet_values)
+        results_list = list(results_filter)
+        self.show_grid(root, results_list)
 
     # show all rows
     def show_all(self, root):
@@ -229,21 +226,6 @@ class MyMainPanel:
         for row in sheet_values:
             if row[0] == id:
                 self.show_grid(root, [row])
-
-    # show all rows that match the client name
-    def show_filtered_by_client(self, root, client_name):
-        resultsList = self.filterBy(sheet_values, client_name, 1)
-        self.show_grid(root, resultsList)
-
-    # show all rows that match the model name
-    def show_filtered_by_model(self, root, model_name):
-        resultsList = self.filterBy(sheet_values, model_name, 2)
-        self.show_grid(root, resultsList)
-
-    # show all rows that match the date
-    def show_filtered_by_date(self, root, date):
-        resultsList = self.filterBy(sheet_values, date, 3)
-        self.show_grid(root, resultsList)
 
     # show most recent 10 rows
     def show_filtered_by_date_last_ten(self, root):
