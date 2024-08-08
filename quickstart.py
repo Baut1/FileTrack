@@ -10,7 +10,7 @@ from actions import *
 # interfaz grafica
 root = ttk.Window(themename="superhero")
 root.title("Archivos")
-root.geometry("900x600")
+root.geometry("1200x600")
 
 def btn_nueva_ventana():
   mainFrame = Frame(root)
