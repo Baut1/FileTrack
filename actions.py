@@ -22,7 +22,8 @@ load_dotenv('./constants.env')
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 # The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = os.environ.get('SPREADSHEET_ID')
+SPREADSHEET_ID = os.environ.get('SPREADSHEET_ID')
+SPREADSHEET_NAME = os.environ.get('SPREADSHEET_NAME')
 SAMPLE_RANGE_NAME = os.environ.get('RANGE_NAME')
 
 # intitialize data values
@@ -61,7 +62,7 @@ def main():
     sheet = service.spreadsheets()
     result = (
         sheet.values()
-        .get(spreadsheetId=SAMPLE_SPREADSHEET_ID, range=SAMPLE_RANGE_NAME)
+        .get(spreadsheetId=SPREADSHEET_ID, range=SAMPLE_RANGE_NAME)
         .execute()
     )
     global sheet_values
@@ -173,9 +174,6 @@ class MyMainPanel:
         # loop through the whole list
         for r in range(0, len(listValues)):
             target_id = listValues[r][0]
-            # id_label = ttk.Label(root, text=listValues[r][0])
-            # id_label.grid(row=r+3, column=0, padx=10, pady=5)
-            # self.widgets.append(id_label)
 
             # initialize entries
             entries = []
@@ -262,8 +260,8 @@ class MyMainPanel:
                 sheet = service.spreadsheets()
                 result = (
                     sheet.values()
-                    .update(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                            range=f'Turnos!B{row_index}:G{row_index}',
+                    .update(spreadsheetId=SPREADSHEET_ID,
+                            range=f'{SPREADSHEET_NAME}!B{row_index}:G{row_index}',
                             valueInputOption='USER_ENTERED',
                             body=body)
                 )
@@ -289,8 +287,8 @@ class MyMainPanel:
                     sheet = service.spreadsheets()
                     append_request = (
                         sheet.values()
-                        .append(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                range=f'Turnos!A1',
+                        .append(spreadsheetId=SPREADSHEET_ID,
+                                range=f'{SPREADSHEET_NAME}!A1',
                                 valueInputOption='USER_ENTERED',
                                 body={'values': [new_row_values]})
                     )
@@ -327,7 +325,7 @@ class MyMainPanel:
                 service = build("sheets", "v4", credentials=creds)
                 # Call the Sheets API
                 response = service.spreadsheets().batchUpdate(
-                    spreadsheetId=SAMPLE_SPREADSHEET_ID,
+                    spreadsheetId=SPREADSHEET_ID,
                     body=request_body
                 ).execute()
                 print(f"Row {row_index + 1} deleted.")
