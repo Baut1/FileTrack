@@ -10,7 +10,7 @@ from actions import *
 # interfaz grafica
 root = ttk.Window(themename="superhero")
 root.title("Archivos")
-root.geometry("1200x600")
+root.geometry("1800x900")
 
 def btn_nueva_ventana():
   mainFrame = Frame(root)
@@ -19,7 +19,7 @@ def btn_nueva_ventana():
   abrir.destroy()
 
 abrir = ttk.Button(root,
-                   text="Abrir",
+                   text="Entrar",
                    cursor="hand2",
                    command=btn_nueva_ventana)
 abrir.place(relx=0.5, rely=0.5, anchor='center')

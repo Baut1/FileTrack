@@ -18,6 +18,9 @@ from googleapiclient.errors import HttpError
 from dotenv import load_dotenv
 load_dotenv('./constants.env')
 
+# import button class
+from button_panel import ButtonPanel
+
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
@@ -86,51 +89,28 @@ class MyMainPanel:
 
         # search input
         Label(root, text="Buscar:").grid(row=1, column=0)
-        searchEntry = ttk.Entry(root, width=10)
-        searchEntry.grid(row=1, column=1)
+        search_entry = ttk.Entry(root, width=10)
+        search_entry.grid(row=1, column=1, columnspan=4, sticky='ew')
 
         # list of texts for the labels
-        label_texts = ["Cliente", "Modelo", "Fecha", "Problema", "Email", "Comentario"]
+        label_texts = ["Cliente", "Expediente", "Fecha", "Observaciones", "Exp. anterior", "Facturado", "Estado", "Trámite"]
         # create and place labels
         for i, text in enumerate(label_texts):
             label = ttk.Label(root, text=text)
             label.grid(row=2, column=i, padx=10, pady=5)  # Arrange labels in a grid
 
         # action buttons
-        # search by clientname
-        ttk.Button(root,
-                        text="Buscar por cliente",
-                        bootstyle=PRIMARY,
-                        cursor="hand2",
-                        command=lambda:self.filter_by(root,
-                                                     searchEntry.get(),
-                                                     row_index = 1)
-                        ).grid(row=0,
-                               column=0,
-                               padx=1,
-                               pady=1)
-        # search by model name
-        ttk.Button(root,
-                    text="Buscar por modelo",
-                    bootstyle=PRIMARY,
-                    cursor="hand2",
-                    command=lambda:self.filter_by(root,
-                                                 searchEntry.get(),
-                                                 row_index=2)
-                    ).grid(row=0,
-                        column=1,
-                        padx=1, pady=1)
-        # search by date
-        ttk.Button(root,
-                    text="Buscar por fecha",
-                    bootstyle=PRIMARY,
-                    cursor="hand2",
-                    command=lambda:self.filter_by(root,
-                                                 searchEntry.get(),
-                                                 row_index=3)
-                    ).grid(row=0,
-                        column=2,
-                        padx=1, pady=1)
+        # button panel
+        # parameters: text, row, column, command, bootstyle
+        buttons_config = [
+            ("Buscar por cliente", 1, 0, self.filter_by, "primary"),
+            ("Buscar por expediente", 2, 1, self.filter_by, "primary"),
+            ("Buscar por fecha", 3, 2, self.filter_by, "primary"),
+            ("Buscar por observaciones", 4, 3, self.filter_by, "primary"),
+            ("Buscar por exp anterior", 5, 4, self.filter_by, "primary")
+        ]
+        panel = ButtonPanel(root, buttons_config, search_entry)
+
         # search last 10
         ttk.Button(root,
                     text="Buscar ultimos",
@@ -138,7 +118,7 @@ class MyMainPanel:
                     cursor="hand2",
                     command=lambda:self.show_filtered_by_date_last_ten(root)
                     ).grid(row=0,
-                        column=3,
+                        column=5,
                         padx=1, pady=1)
         # retrieve all
         ttk.Button(root,
@@ -147,16 +127,16 @@ class MyMainPanel:
                     cursor="hand2",
                     command=lambda:self.show_all(root)
                     ).grid(row=0,
-                            column=4,
+                            column=6,
                             padx=1, pady=1)
         # create new
         ttk.Button(root,
-                    text="Crear",
+                    text="Crear nuevo expediente",
                     bootstyle=SUCCESS,
                     cursor="hand2",
                     command=lambda:self.open_new_window()
                     ).grid(row=0,
-                            column=5,
+                            column=7,
                                 padx=1, pady=1)
 
     # actions
@@ -164,7 +144,7 @@ class MyMainPanel:
     def clear_cells(self):
         for widget in self.widgets:
             widget.destroy()
-        self.widgets = []
+        self.widgets.clear()
 
     # shows grid when given values, called by other filtering and sorting functions
     def show_grid(self, root, listValues):
@@ -177,17 +157,68 @@ class MyMainPanel:
 
             # initialize entries
             entries = []
+            vars = []
+            comboboxes = []
+
+            # define anchos específicos para columnas usando un diccionario
+            column_widths = {
+                1: 15,
+                2: 17,
+                3: 10,
+                4: 25,
+                5: 17,
+                6: 10,
+                7: 10,
+                8: 35
+            }
+
+            combobox_options = {
+                7: ["En tramite", "Subsanar", "Finalizado"],
+                8: ["Certificaciones Eléctricas-Excepción por uso idóneo/repuestos/insumos",
+                    "Solicitud de Excepción de Reglamentos Técnicos",
+                    "SOLICITUD DE EXCEPCIÓN ARTS. 13 BIS Y 13 TER (RES. SC N° 169/18)"]
+            }
+
             # loop inside the row for every value
-            for c in range(1, 7):
-                cell = Entry(root, width=10)
-                cell.grid(padx=5, pady=5, row=r+3, column=c-1)
-                cell.insert(0, '{}'.format(listValues[r][c]))
-                self.widgets.append(cell)
-                entries.append(cell)
+            for c in range(1, 9):
+                text = '{}'.format(listValues[r][c])
+                if c <= 5: # Primeros 5 widgets son Entry
+                    cell_width = column_widths.get(c, 10)
+                    cell = Entry(root, width=cell_width)
+                    cell.grid(padx=5, pady=5, row=r+3, column=c-1)
+                    cell.insert(0, text)
+                    entries.append(cell)
+
+                elif c == 6:  # 6º widget es Checkbutton
+                    var = StringVar()
+                    var.set(text)  # Establece el valor inicial
+                    checkbutton = ttk.Checkbutton(root, variable=var, onvalue="SI", offvalue="NO")
+                    checkbutton.grid(padx=5, pady=5, row=r+3, column=c-1)
+                    vars.append(var)  # Guarda el StringVar separado
+                
+                else:  # Últimos 2 widgets son Combobox
+                    combobox = ttk.Combobox(root, values=combobox_options.get(c), width=column_widths.get(c))
+                    combobox.grid(padx=5, pady=5, row=r+3, column=c-1)
+                    combobox.set(text)
+                    comboboxes.append(combobox)
             
             # get entries and try to update_by_id()
-            def get_updated_entries(entries, target_id):
-                updated_values = [entry.get() for entry in entries]
+            def get_updated_entries(entries, vars, comboboxes, target_id):
+                # Filtra y recolecta valores de los Entry
+                entry_values = [entry.get() for entry in entries if isinstance(entry, Entry)]
+                
+                # Filtra y recolecta valores de los Checkbutton
+                checkboxes_values = [var.get() for var in vars]
+                
+                # Filtra y recolecta valores de los Combobox
+                combobox_values = [combobox.get() for combobox in comboboxes]
+                
+                # Crea una lista con los valores en el orden deseado
+                updated_values = entry_values  # Empieza con valores de Entry
+                updated_values.extend(checkboxes_values)  # Agrega valores de Checkbutton
+                updated_values.extend(combobox_values)  # Agrega valores de Combobox
+
+                # Llama a ask_ok_cancel con los valores actualizados
                 self.ask_ok_cancel(target_id=target_id, updated_values=updated_values, action="UPDATE")
             
             # edit button
@@ -195,19 +226,27 @@ class MyMainPanel:
                 text="Editar",
                 bootstyle="primary",
                 cursor="hand2",
-                command=lambda entries=entries, target_id=target_id: get_updated_entries(entries, target_id)
+                command=lambda entries=entries,
+                    vars=vars,
+                    comboboxes=comboboxes,
+                    target_id=target_id: get_updated_entries(entries,
+                                                             vars,
+                                                             comboboxes,
+                                                             target_id)
                 )
-            edit_button.grid(row=r+3, column=7,
+            edit_button.grid(row=r+3, column=8,
                         padx=1, pady=1)
-            self.widgets.append(edit_button)
             # delete button
             delete_button = ttk.Button(root,
                 text="Eliminar",
                 bootstyle="danger",
                 cursor="hand2",
                 command=lambda target_id=target_id: self.ask_ok_cancel(target_id=target_id, action="DELETE"))
-            delete_button.grid(row=r+3, column=8)
-            self.widgets.append(delete_button)
+            delete_button.grid(row=r+3, column=9)
+
+            self.widgets.extend(entries)
+            self.widgets.extend(comboboxes)  # Agrega Comboboxes
+            self.widgets.extend([edit_button, delete_button])
 
     # filter by entry value
     def filter_by(self, root, search_value, row_index):
@@ -228,7 +267,7 @@ class MyMainPanel:
     # show most recent 10 rows
     def show_filtered_by_date_last_ten(self, root):
         arrays_sorted = sorted(sheet_values, key=lambda x: x[3], reverse=True)
-        resultsList = arrays_sorted[:3]
+        resultsList = arrays_sorted[:10]
         self.show_grid(root, resultsList)
 
     # find the row index ("range") given an id
@@ -261,7 +300,7 @@ class MyMainPanel:
                 result = (
                     sheet.values()
                     .update(spreadsheetId=SPREADSHEET_ID,
-                            range=f'{SPREADSHEET_NAME}!B{row_index}:G{row_index}',
+                            range=f'{SPREADSHEET_NAME}!B{row_index}:I{row_index}',
                             valueInputOption='USER_ENTERED',
                             body=body)
                 )
