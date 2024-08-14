@@ -195,6 +195,7 @@ class MyMainPanel:
                     checkbutton = ttk.Checkbutton(root, variable=var, onvalue="SI", offvalue="NO")
                     checkbutton.grid(padx=5, pady=5, row=r+3, column=c-1)
                     vars.append(var)  # Guarda el StringVar separado
+                    entries.append(checkbutton)
                 
                 else:  # Últimos 2 widgets son Combobox
                     combobox = ttk.Combobox(root, values=combobox_options.get(c), width=column_widths.get(c))
@@ -205,17 +206,17 @@ class MyMainPanel:
             # get entries and try to update_by_id()
             def get_updated_entries(entries, vars, comboboxes, target_id):
                 # Filtra y recolecta valores de los Entry
-                entry_values = [entry.get() for entry in entries if isinstance(entry, Entry)]
+                entry_values = [entry.get() for entry in entries if isinstance(entry, Entry) or isinstance(entry, ttk.Checkbutton)]
                 
                 # Filtra y recolecta valores de los Checkbutton
-                checkboxes_values = [var.get() for var in vars]
+                # checkboxes_values = [var.get() for var in vars]
                 
                 # Filtra y recolecta valores de los Combobox
                 combobox_values = [combobox.get() for combobox in comboboxes]
                 
                 # Crea una lista con los valores en el orden deseado
                 updated_values = entry_values  # Empieza con valores de Entry
-                updated_values.extend(checkboxes_values)  # Agrega valores de Checkbutton
+                # updated_values.extend(checkboxes_values)  # Agrega valores de Checkbutton
                 updated_values.extend(combobox_values)  # Agrega valores de Combobox
 
                 # Llama a ask_ok_cancel con los valores actualizados

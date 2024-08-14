@@ -10,7 +10,8 @@ from actions import *
 # interfaz grafica
 root = ttk.Window(themename="superhero")
 root.title("Archivos")
-root.geometry("1800x900")
+root.state('zoomed')
+# root.geometry("1800x900")
 
 def btn_nueva_ventana():
   mainFrame = Frame(root)
