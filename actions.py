@@ -101,7 +101,7 @@ class MyMainPanel:
 
         # action buttons
         # button panel
-        # parameters: text, row, column, command, bootstyle
+        # parameters: text, row, sheet column, command, bootstyle
         buttons_config = [
             ("Buscar por cliente", 1, 0, self.filter_by, "primary"),
             ("Buscar por expediente", 2, 1, self.filter_by, "primary"),
@@ -110,7 +110,16 @@ class MyMainPanel:
             ("Buscar por exp anterior", 5, 4, self.filter_by, "primary")
         ]
         panel = ButtonPanel(root, buttons_config, search_entry)
-
+        
+        # retrieve unbilled
+        ttk.Button(root,
+                    text="Buscar no facturados",
+                    bootstyle=PRIMARY,
+                    cursor="hand2",
+                    command=lambda:self.show_filtered_by_unbilled(root)
+                    ).grid(row=0,
+                        column=5,
+                        padx=1, pady=1)
         # search last 10
         ttk.Button(root,
                     text="Buscar ultimos",
@@ -118,7 +127,7 @@ class MyMainPanel:
                     cursor="hand2",
                     command=lambda:self.show_filtered_by_date_last_ten(root)
                     ).grid(row=0,
-                        column=5,
+                        column=6,
                         padx=1, pady=1)
         # retrieve all
         ttk.Button(root,
@@ -127,7 +136,7 @@ class MyMainPanel:
                     cursor="hand2",
                     command=lambda:self.show_all(root)
                     ).grid(row=0,
-                            column=6,
+                            column=7,
                             padx=1, pady=1)
         # create new
         ttk.Button(root,
@@ -135,7 +144,7 @@ class MyMainPanel:
                     bootstyle=SUCCESS,
                     cursor="hand2",
                     command=lambda:self.open_new_window()
-                    ).grid(row=0,
+                    ).grid(row=8,
                             column=7,
                                 padx=1, pady=1)
 
@@ -265,6 +274,12 @@ class MyMainPanel:
         for row in sheet_values:
             if row[0] == id:
                 self.show_grid(root, [row])
+
+    # show unbilled
+    def show_filtered_by_unbilled(self, root):
+        results_filter = filter(lambda row: "no" in row[6].lower(), sheet_values)
+        results_list = list(results_filter)
+        self.show_grid(root, results_list)
 
     # show most recent 10 rows
     def show_filtered_by_date_last_ten(self, root):
