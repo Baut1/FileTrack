@@ -148,6 +148,7 @@ class MyMainPanel:
 
     # shows grid when given values, called by other filtering and sorting functions
     def show_grid(self, root, listValues):
+        listValues = listValues[:20]
         # clear existing grid
         self.clear_cells()
         
