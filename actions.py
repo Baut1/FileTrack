@@ -129,22 +129,13 @@ class MyMainPanel:
                     ).grid(row=0,
                         column=6,
                         padx=1, pady=1)
-        # retrieve all
-        ttk.Button(root,
-                    text="Ver todos",
-                    bootstyle=PRIMARY,
-                    cursor="hand2",
-                    command=lambda:self.show_all(root)
-                    ).grid(row=0,
-                            column=7,
-                            padx=1, pady=1)
         # create new
         ttk.Button(root,
                     text="Crear nuevo expediente",
                     bootstyle=SUCCESS,
                     cursor="hand2",
                     command=lambda:self.open_new_window()
-                    ).grid(row=8,
+                    ).grid(row=0,
                             column=7,
                                 padx=1, pady=1)
 
@@ -264,10 +255,6 @@ class MyMainPanel:
         results_filter = filter(lambda row: search_value.lower() in row[row_index].lower(), sheet_values)
         results_list = list(results_filter)
         self.show_grid(root, results_list)
-
-    # show all rows
-    def show_all(self, root):
-        self.show_grid(root, sheet_values)
 
     # show row given its id
     def show_by_id(self, root, id):
@@ -418,14 +405,14 @@ class MyMainPanel:
         entries = []
 
         # list of texts for the labels
-        label_texts = ["Cliente", "Modelo", "Fecha", "Problema", "Email", "Comentario"]
+        label_texts = ["Cliente", "Expediente", "Fecha", "Observaciones", "Exp. anterior", "Facturado", "Estado", "Trámite"]
         # create and place labels
         for i, text in enumerate(label_texts):
             label = ttk.Label(new_window, text=text)
             label.grid(row=0, column=i, padx=10, pady=5)  # Arrange labels in a grid
 
         # entry cells
-        for c in range(0, 6):
+        for c in range(0, len(label_texts)):
             cell = Entry(new_window, width=10)
             cell.grid(padx=5, pady=5, row=1, column=c)
             entries.append(cell)
@@ -441,7 +428,7 @@ class MyMainPanel:
                     cursor="hand2",
                     command=lambda:get_new_window_entries()
                     ).grid(row=2,
-                           column=4,
+                           column=6,
                            padx=10,
                            pady=10)
         
@@ -449,7 +436,7 @@ class MyMainPanel:
                    text="Cerrar",
                    bootstyle="danger",
                    command=new_window.destroy
-                   ).grid(row=2, column=5, padx=10, pady=10)
+                   ).grid(row=2, column=7, padx=10, pady=10)
 
 if __name__ == "__main__":
   main()
