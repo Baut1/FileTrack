@@ -9,17 +9,20 @@ from actions import *
 
 # interfaz grafica
 root = ttk.Window(themename="superhero")
-root.title("Archivos")
-root.geometry("1200x600")
 
 def btn_nueva_ventana():
-  mainFrame = Frame(root)
-  mainFrame.grid(row=1, column=0, padx=10, pady=2)
-  mainPanel = MyMainPanel(root, mainFrame)
+  main_frame = Frame(root)
+  main_frame.grid(row=1, column=0, sticky="nsew")
+  main_panel = MyMainPanel(root, main_frame)
+
+  # Remove the button after opening the new window
   abrir.destroy()
 
+root.title("Archivos")
+root.state('zoomed')
+
 abrir = ttk.Button(root,
-                   text="Abrir",
+                   text="Entrar",
                    cursor="hand2",
                    command=btn_nueva_ventana)
 abrir.place(relx=0.5, rely=0.5, anchor='center')
